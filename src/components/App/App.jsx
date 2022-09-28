@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Searchbar from 'components/Searchbar/Searchbar';
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import ImageGallery from 'components/ImageGallery/ImageGallery';
@@ -12,7 +12,8 @@ export default class App extends Component {
   APP_KEY = '8185021-24268e96be1b2c00462570825';
   state = {
     query: '',
-    hits: null,
+    hits: [],
+    totalHits: 0,
     page: 1,
     loader: false,
   };
@@ -29,10 +30,19 @@ export default class App extends Component {
           `https://pixabay.com/api/?q=${this.state.query}&page=${this.state.page}&key=${this.APP_KEY}&image_type=photo&orientation=horizontal&per_page=12`
         );
 
-        this.setState({
-          hits: response.data.hits,
-          loader: false,
+        this.setState(prev => {
+          return {
+            hits: [...prev.hits, ...response.data.hits],
+            loader: false,
+            totalHits: response.data.totalHits,
+          };
         });
+        if (response.data.hits.length === 0) {
+          toast.info(
+            `Search request ${this.state.query} is not found. Please  try again`
+          );
+          return;
+        }
       } catch (error) {
         console.log(error);
       }
@@ -42,6 +52,7 @@ export default class App extends Component {
     this.setState({
       query,
       page: 1,
+      hits: [],
     });
   };
   handleLoadMoreBtn = () => {
@@ -51,6 +62,7 @@ export default class App extends Component {
   };
 
   render() {
+    const { hits, totalHits, loader } = this.state;
     return (
       <AppWrapper>
         <ToastContainer
@@ -66,13 +78,11 @@ export default class App extends Component {
           theme="colored"
         />
         <Searchbar onSubmit={this.handleSearchQuery} />
-        {this.state.hits && (
-          <>
-            <ImageGallery hits={this.state.hits} />
-            <Button onClick={this.handleLoadMoreBtn} />
-          </>
+        {hits && <ImageGallery hits={hits} />}
+        {hits.length < totalHits && hits.length > 0 && (
+          <Button onClick={this.handleLoadMoreBtn} />
         )}
-        {this.state.loader && <Loader />}
+        {loader && <Loader />}
       </AppWrapper>
     );
   }
