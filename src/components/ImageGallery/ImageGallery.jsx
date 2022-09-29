@@ -7,7 +7,16 @@ export default class ImageGallery extends Component {
     return (
       <GalleryWrapper className="gallery">
         {hits.map(hit => {
-          return <ImageGalleryItem key={hit.id} smallImg={hit.webformatURL} />;
+          return (
+            <ImageGalleryItem
+              openModal={this.props.modalHandler}
+              sendData={this.props.modalInfo}
+              key={hit.id}
+              tags={hit.tags}
+              largeImg={hit.largeImageURL}
+              smallImg={hit.webformatURL}
+            />
+          );
         })}
       </GalleryWrapper>
     );

@@ -7,7 +7,9 @@ import ImageGallery from 'components/ImageGallery/ImageGallery';
 import Button from 'components/Button/Button';
 import { AppWrapper } from './App.styled';
 import Loader from 'components/Loader/Loader';
-
+import Modal from 'components/Modal/Modal';
+import { AiOutlineCloseCircle } from 'react-icons/ai';
+import { ModalButton } from 'components/Modal/Modal.styled';
 export default class App extends Component {
   APP_KEY = '8185021-24268e96be1b2c00462570825';
   state = {
@@ -16,6 +18,11 @@ export default class App extends Component {
     totalHits: 0,
     page: 1,
     loader: false,
+    modalIisShown: false,
+    modalComponents: {
+      src: 'https://pixabay.com/get/gd53389845b169af23c624d89bd4d84d73b53ab4e93fea5efdadbd93768de75604e58472320ef2e98d8d658c0ec3e3662_640.jpg',
+      alt: 'cat',
+    },
   };
   async componentDidUpdate(_, prevState) {
     if (
@@ -48,11 +55,28 @@ export default class App extends Component {
       }
     }
   }
+  toogleModal = () => {
+    this.setState(({ modalIisShown }) => ({
+      modalIisShown: !modalIisShown,
+    }));
+  };
+  handleModalInfo = data => {
+    if (data) {
+      const { src, alt } = data;
+      this.setState({
+        modalComponents: {
+          src,
+          alt,
+        },
+      });
+    }
+  };
   handleSearchQuery = query => {
     this.setState({
       query,
       page: 1,
       hits: [],
+      modalIisShown: false,
     });
   };
   handleLoadMoreBtn = () => {
@@ -62,7 +86,7 @@ export default class App extends Component {
   };
 
   render() {
-    const { hits, totalHits, loader } = this.state;
+    const { hits, totalHits, loader, modalIisShown } = this.state;
     return (
       <AppWrapper>
         <ToastContainer
@@ -77,12 +101,30 @@ export default class App extends Component {
           pauseOnHover
           theme="colored"
         />
+
         <Searchbar onSubmit={this.handleSearchQuery} />
-        {hits && <ImageGallery hits={hits} />}
+        {hits && (
+          <ImageGallery
+            hits={hits}
+            modalInfo={this.handleModalInfo}
+            modalHandler={this.toogleModal}
+          />
+        )}
         {hits.length < totalHits && hits.length > 0 && (
           <Button onClick={this.handleLoadMoreBtn} />
         )}
         {loader && <Loader />}
+        {modalIisShown && (
+          <Modal onModalClose={this.toogleModal}>
+            <img
+              src={this.state.modalComponents.src}
+              alt={this.state.modalComponents.alt}
+            />
+            <ModalButton type="button" onClick={this.toogleModal}>
+              <AiOutlineCloseCircle />
+            </ModalButton>
+          </Modal>
+        )}
       </AppWrapper>
     );
   }
