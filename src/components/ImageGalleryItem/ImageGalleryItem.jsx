@@ -3,6 +3,7 @@ import {
   GalleryItemImage,
   GalleryItemWrapper,
 } from './ImageGalleryItem.styled';
+import PropTypes from 'prop-types';
 
 export default class ImageGalleryItem extends Component {
   state = {
@@ -26,7 +27,7 @@ export default class ImageGalleryItem extends Component {
   render() {
     const { smallImg, tags } = this.props;
     return (
-      <GalleryItemWrapper className="gallery-item">
+      <GalleryItemWrapper>
         <GalleryItemImage
           onClick={this.handleModalData}
           src={smallImg}
@@ -36,3 +37,11 @@ export default class ImageGalleryItem extends Component {
     );
   }
 }
+
+ImageGalleryItem.propTypes = {
+  openModal: PropTypes.func.isRequired,
+  sendData: PropTypes.func.isRequired,
+  tags: PropTypes.string.isRequired,
+  largeImg: PropTypes.string.isRequired,
+  smallImg: PropTypes.string.isRequired,
+};

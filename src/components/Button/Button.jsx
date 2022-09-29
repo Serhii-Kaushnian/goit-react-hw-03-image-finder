@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { ButtonWrapper } from './Button.styled';
 import { AiOutlineReload } from 'react-icons/ai';
 export default class Button extends Component {
@@ -11,3 +12,6 @@ export default class Button extends Component {
     );
   }
 }
+Button.propTypes = {
+  onClick: PropTypes.func.isRequired,
+};
