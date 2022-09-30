@@ -114,10 +114,10 @@ export default class App extends Component {
             modalHandler={this.toogleModal}
           />
         )}
+        {loader && <Loader />}
         {hits.length < totalHits && hits.length > 0 && (
           <Button onClick={this.handleLoadMoreBtn} />
         )}
-        {loader && <Loader />}
         {modalIisShown && (
           <Modal onModalClose={this.toogleModal}>
             <img
