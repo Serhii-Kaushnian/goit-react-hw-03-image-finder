@@ -72,12 +72,16 @@ export default class App extends Component {
     }
   };
   handleSearchQuery = query => {
-    this.setState({
-      query,
-      page: 1,
-      hits: [],
-      modalIisShown: false,
-    });
+    if (query !== this.state.query) {
+      this.setState({
+        query,
+        page: 1,
+        hits: [],
+        modalIisShown: false,
+      });
+    } else {
+      toast.info(`Search request ${query} is already chosen`);
+    }
   };
   handleLoadMoreBtn = () => {
     this.setState(prev => {
